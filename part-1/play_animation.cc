@@ -1,3 +1,13 @@
+// Grace Lee
+// CPSC 120-01
+// 2021-10-28
+// grace1@csu.fullerton.edu
+// @gracelee2
+//
+// Lab 08-01
+//
+// This lab makes animations
+//
 
 #include <chrono>
 #include <fstream>
@@ -13,35 +23,46 @@ using namespace std;
 /// simpliest case, it can be the name of a file in the same directory
 /// as the program.
 int main(int argc, char const* argv[]) {
-  // TODO: Using argv and argc, create a vector<string> args which contains the
-  // command line arguments. Make sure there are at least two command line
-  // arguments before continuing. If there are fewer than two, print an error
-  // message and exit with an error code of 1.
-  // TODO: Declare a string variable named input_file_name. Assign the first
-  // argument from the command line arguments to this variable. Make sure to
-  // catch any errors and print an error message if an error occurs.
+  vector<string> args = vector<string>(argv, argv + argc);
+  if (args.size() < 2) {
+    cout << "Please provide a path to a file.\n";
+    try {
+      cout << args.at(0) << " 01_words.txt\n";
+    } catch (out_of_range const& problem) {
+      cout << "Uh-oh, you went out of bounds.\n";
+      cout << problem.what() << "\n";
+      return 1;
+    }
+    return 1;
+  }
+  string input_file_name;
+  try {
+    input_file_name = args.at(1);
+  } catch (exception const& problem) {
+    cout << problem.what() << "\n";
+    return 1;
+  }
+  ifstream input_file_stream(input_file_name);
+  if (!input_file_stream.is_open()) {
+    cout << "File not open";
+    return 1;
+  }
 
-  // TODO: Declare an ifstream variable named input_file_stream and initialize
-  // it with the variable input_file_name. Next, verify that the file was
-  // successfully opened. If it was not successfully opened, print an error
-  // message and exit with an error code of 1.
-
-  // TODO: Declare a char variable named letter and initialize it to the value
-  // 0. This is one of the few times in this class where we will use a char
-  // type. In order to make the animation work, we must copy a letter out of the
-  // input file into a variable, then print the letter to the terminal. We
-  // repeat this process until we reach the end of the file. To mimic the
-  // performance of a terminal from the 1980s and 1990s, we cause the program to
-  // stop for 10,000 microseconds after every iteration of the loop. An example
-  // is provided in the README.
-
-  // TODO: We're done reading the file because we got to the end of the file or
-  // there was an error condition. Check to see if there was an error condition
-  // similar to previous labs working with input file streams. If there was an
-  // error, print a message and exit with an error code of 1. Otherwise, print a
-  // message saying that the end of the file was reached successfully.
-
-  // TODO: Close the file stream
+  char letter = 0;
+  while (input_file_stream.get(letter)) {
+    cout << letter;
+    this_thread::sleep_for(10000us);
+  }
+  if (input_file_stream.eof()) {
+    cout << "End of file reached successfully!\n";
+  } else if (input_file_stream.bad()) {
+    cout << "I/O error while reading.\n";
+    return 1;
+  } else if (input_file_stream.fail()) {
+    cout << "Failure: Long line.\n";
+    return 1;
+  }
+  input_file_stream.close();
 
   return 0;
 }
